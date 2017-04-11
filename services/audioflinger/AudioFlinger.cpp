@@ -989,6 +989,24 @@ status_t AudioFlinger::setStreamVolume(audio_stream_type_t stream, float value,
         thread->setStreamVolume(stream, value);
     }
 
+#ifdef MTK_HARDWARE
+    if(stream == AUDIO_STREAM_MUSIC)
+    {
+        sp<ThreadBase> thread;
+        thread = checkPlaybackThread_l(output);
+        if (thread == primaryPlaybackThread_l())
+        {
+            ALOGV("setStreamVolume FM  value = %f",value);
+            audio_hw_device_t *dev = mPrimaryHardwareDev->hwDevice();
+            dev->set_parameters (dev,String8::format("SetFmVolume=%f",value));
+        }
+        else
+        {
+            ALOGV("Invalid setStreamVolume FM  value = %f",value);
+        }
+    }
+#endif
+
     return NO_ERROR;
 }
 
@@ -1003,6 +1021,16 @@ status_t AudioFlinger::setStreamMute(audio_stream_type_t stream, bool muted)
     if (status != NO_ERROR) {
         return status;
     }
+
+#ifdef MTK_HARDWARE
+    if(stream == AUDIO_STREAM_MUSIC)
+    {
+        ALOGV("setStreamMute MATV muted=%d",muted);
+        audio_hw_device_t *dev = mPrimaryHardwareDev->hwDevice();
+        dev->set_parameters (dev,String8::format("SetMatvMute=%d",muted));
+    }
+#endif
+
     ALOG_ASSERT(stream != AUDIO_STREAM_PATCH, "attempt to mute AUDIO_STREAM_PATCH");
 
     if (uint32_t(stream) == AUDIO_STREAM_ENFORCED_AUDIBLE) {

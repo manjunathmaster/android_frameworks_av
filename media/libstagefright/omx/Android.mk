@@ -36,8 +36,10 @@ ifeq ($(strip $(AUDIO_FEATURE_ENABLED_EXTN_FLAC_DECODER)),true)
 endif
 endif
 
-ifeq ($(BOARD_SKIP_CVE_2017_13154),true)
-LOCAL_CFLAGS += -DSKIP_CVE_2017_13154
+ifeq ($(BOARD_HAS_MTK_HARDWARE),true)
+ifeq ($(BOARD_USES_LEGACY_MTK_AV_BLOB),true)
+LOCAL_CFLAGS += -DUSE_LEGACY_MTK_AV_BLOB
+endif
 endif
 
 LOCAL_MODULE:= libstagefright_omx

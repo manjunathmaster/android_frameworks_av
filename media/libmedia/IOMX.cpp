@@ -147,7 +147,11 @@ public:
         data.writeInterfaceToken(IOMX::getInterfaceDescriptor());
         data.writeInt32((int32_t)node);
         data.writeInt32(index);
+#ifdef USE_LEGACY_MTK_AV_BLOB
+        data.writeInt32(size);
+#else
         data.writeInt64(size);
+#endif
         data.write(params, size);
         remote()->transact(GET_PARAMETER, data, &reply);
 
@@ -168,7 +172,11 @@ public:
         data.writeInterfaceToken(IOMX::getInterfaceDescriptor());
         data.writeInt32((int32_t)node);
         data.writeInt32(index);
+#ifdef USE_LEGACY_MTK_AV_BLOB
+        data.writeInt32(size);
+#else
         data.writeInt64(size);
+#endif
         data.write(params, size);
         remote()->transact(SET_PARAMETER, data, &reply);
 
@@ -182,7 +190,11 @@ public:
         data.writeInterfaceToken(IOMX::getInterfaceDescriptor());
         data.writeInt32((int32_t)node);
         data.writeInt32(index);
+#ifdef USE_LEGACY_MTK_AV_BLOB
+        data.writeInt32(size);
+#else
         data.writeInt64(size);
+#endif
         data.write(params, size);
         remote()->transact(GET_CONFIG, data, &reply);
 
@@ -203,7 +215,11 @@ public:
         data.writeInterfaceToken(IOMX::getInterfaceDescriptor());
         data.writeInt32((int32_t)node);
         data.writeInt32(index);
+#ifdef USE_LEGACY_MTK_AV_BLOB
+        data.writeInt32(size);
+#else
         data.writeInt64(size);
+#endif
         data.write(params, size);
         remote()->transact(SET_CONFIG, data, &reply);
 
@@ -583,7 +599,11 @@ public:
         data.writeInterfaceToken(IOMX::getInterfaceDescriptor());
         data.writeInt32((int32_t)node);
         data.writeInt32(port_index);
+#ifdef USE_LEGACY_MTK_AV_BLOB
+        data.writeInt32(size);
+#else
         data.writeInt64(size);
+#endif
         data.write(optionData, size);
         data.writeInt32(type);
         remote()->transact(SET_INTERNAL_OPTION, data, &reply);
@@ -695,7 +715,11 @@ status_t BnOMX::onTransact(
             node_id node = (node_id)data.readInt32();
             OMX_INDEXTYPE index = static_cast<OMX_INDEXTYPE>(data.readInt32());
 
+#ifdef USE_LEGACY_MTK_AV_BLOB
+            size_t size = data.readInt32();
+#else
             size_t size = data.readInt64();
+#endif
 
             status_t err = NOT_ENOUGH_DATA;
             void *params = NULL;

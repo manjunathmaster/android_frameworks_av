@@ -36,7 +36,12 @@ LOCAL_SRC_FILES:= \
 	camera2/OutputConfiguration.cpp \
 	CameraBase.cpp \
 	CameraUtils.cpp \
-	VendorTagDescriptor.cpp
+	VendorTagDescriptor.cpp \
+
+ifeq ($(BOARD_HAS_MTK_HARDWARE),true)
+	LOCAL_SRC_FILES += \
+		MtkCameraParameters.cpp
+endif
 
 LOCAL_SHARED_LIBRARIES := \
 	libcutils \
@@ -56,6 +61,12 @@ ifneq ($(TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY),)
 LOCAL_WHOLE_STATIC_LIBRARIES += $(TARGET_SPECIFIC_CAMERA_PARAMETER_LIBRARY)
 else
 LOCAL_WHOLE_STATIC_LIBRARIES += libcamera_parameters
+endif
+
+ifeq ($(BOARD_HAS_MTK_HARDWARE),true)
+LOCAL_SRC_FILES += \
+    MtkCamera.cpp \
+
 endif
 
 LOCAL_MODULE:= libcamera_client

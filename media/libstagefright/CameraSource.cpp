@@ -639,16 +639,6 @@ status_t CameraSource::startCameraRecording() {
         }
     }
 
-    err = mCamera->sendCommand(
-        CAMERA_CMD_SET_VIDEO_FORMAT, mEncoderFormat, mEncoderDataSpace);
-
-    // This could happen for CameraHAL1 clients; thus the failure is
-    // not a fatal error
-    if (err != OK) {
-        ALOGW("Failed to set video encoder format/dataspace to %d, %d due to %d",
-                mEncoderFormat, mEncoderDataSpace, err);
-    }
-
     err = OK;
     if (mCameraFlags & FLAGS_HOT_CAMERA) {
         mCamera->unlock();
@@ -705,7 +695,8 @@ status_t CameraSource::start(MetaData *meta) {
         int64_t startTimeUs;
 
         auto key = kKeyTime;
-        if (!property_get_bool("media.camera.ts.monotonic", true)) {
+        if (property_get_bool("persist.camera.HAL3.enabled", true) &&
+             !property_get_bool("media.camera.ts.monotonic", true)) {
             key = kKeyTimeBoot;
         }
 

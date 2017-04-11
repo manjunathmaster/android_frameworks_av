@@ -214,6 +214,17 @@ void OMXCodec::findMatchingCodecs(
         return;
     }
 
+    AString *tempMime = new AString(mime);
+    if (tempMime->endsWith("_cam")) {
+        // remove camera tag from mime
+        tempMime->erase(tempMime->size() - 4, 4);
+        mime = tempMime->c_str();
+    }
+    else {
+        // no camera recording, prefer software codecs
+        flags |= kPreferSoftwareCodecs;
+    }
+
     size_t index = 0;
     for (;;) {
         ssize_t matchIndex =
@@ -1799,10 +1810,19 @@ status_t OMXCodec::allocateOutputBuffersFromNativeWindow() {
 #endif
     }
 
+#ifdef MTK_HARDWARE
+    usage |= (GRALLOC_USAGE_SW_WRITE_OFTEN | GRALLOC_USAGE_SW_READ_OFTEN);
+#endif
+
     err = setNativeWindowSizeFormatAndUsage(
             mNativeWindow.get(),
+#ifdef MTK_HARDWARE
+            def.format.video.nStride,
+            def.format.video.nSliceHeight,
+#else
             def.format.video.nFrameWidth,
             def.format.video.nFrameHeight,
+#endif
             def.format.video.eColorFormat,
             rotationDegrees,
             usage | GRALLOC_USAGE_HW_TEXTURE | GRALLOC_USAGE_EXTERNAL_DISP);
